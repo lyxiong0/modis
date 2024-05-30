@@ -31,24 +31,24 @@ import (
 
 // Config for Redis Server
 const (
-	RedisAddr = "127.0.0.1:6379"
+	RedisAddr = "11.162.218.239:9221"
 	RedisPwd  = ""
 	RedisDB   = 0
 )
 
 // Config for Modis
 const (
-	ModisAddr = "127.0.0.1:8085"
+	ModisAddr = "11.158.77.236:8085"
 	ModisPwd  = ""
 	ModisDB   = 0
 )
 
 // Config for Tests
 const (
-	SqlUser     = "root@mysql"
+	SqlUser     = "root@sys"
 	SqlPassWord = ""
-	SqlIp       = "127.0.0.1"
-	SqlPort     = "20903"
+	SqlIp       = "11.158.77.236"
+	SqlPort     = "20203"
 	SqlDatabase = "test"
 )
 

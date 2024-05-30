@@ -18,6 +18,7 @@ package list
 
 import (
 	"context"
+	"github.com/oceanbase/obkv-table-client-go/util"
 	"strconv"
 	"testing"
 
@@ -477,3 +478,52 @@ func TestLRem(t *testing.T) {
 // 	assert.Equal(t, nil, err)
 // 	assert.Equal(t, membersRedis, membersModis)
 // }
+
+func TestDebug(t *testing.T) {
+	key := "obkv-Lrex"
+	defer test.ClearDb(0, rCli, testModisListTableName)
+
+	for i := 0; i < 50; i++ {
+		j := i % 5
+		value := "list" + util.InterfaceToString(j)
+		val, err := rCli.RPush(context.TODO(), key, value).Result()
+		assert.Equal(t, nil, err)
+		val_m, err := mCli.LPush(context.TODO(), key, value).Result()
+		assert.Equal(t, nil, err)
+		assert.Equal(t, val, val_m)
+	}
+
+	//LRem one value
+	mlm, err := mCli.LRem(context.TODO(), key, 1, "list1").Result()
+	assert.Equal(t, nil, err)
+	rlm, err := rCli.LRem(context.TODO(), key, 1, "list1").Result()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, mlm, rlm)
+	assert.Equal(t, mlm, 1)
+
+	//LRem -2 value
+	mlm, err = mCli.LRem(context.TODO(), key, -2, "list2").Result()
+	assert.Equal(t, nil, err)
+	rlm, err = rCli.LRem(context.TODO(), key, -2, "list2").Result()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, mlm, rlm)
+	assert.Equal(t, mlm, 2)
+
+	//LRem 10 value > 5
+	mlm, err = mCli.LRem(context.TODO(), key, 20, "list3").Result()
+	assert.Equal(t, nil, err)
+	rlm, err = rCli.LRem(context.TODO(), key, 20, "list3").Result()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, mlm, rlm)
+	assert.Equal(t, mlm, 10)
+
+	//LRem 10 value > 5
+	for i := 0; i < 50; i++ {
+		mlm, err := mCli.LPop(context.TODO(), key).Result()
+		assert.Equal(t, nil, err)
+		rlm, err := rCli.LPop(context.TODO(), key).Result()
+		assert.Equal(t, nil, err)
+		assert.Equal(t, mlm, rlm)
+	}
+
+}
